@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Module identitystore-openam</title>
+    </properties>
+    <body>
+        <section name="Module identitystore-openam">
+            <subsection name="Introduction">
+                <p>Ce module permet de créer une identity à partir d'OpenAM.</p>
+            </subsection>
+        </section>
+    </body>
+</document>
+
