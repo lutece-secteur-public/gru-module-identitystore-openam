@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundExcep
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.AttributeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.openamidentityclient.business.Account;
-import fr.paris.lutece.plugins.openamidentityclient.business.Identity;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityException;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -55,11 +54,7 @@ import java.util.Map;
 public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
 {
     // Properties
-    private static final String PROPERTIES_ATTRIBUTE_USER_NAME_GIVEN = "identitystore.openam.attribute.user.name.given";
-    private static final String PROPERTIES_ATTRIBUTE_USER_NAME_FAMILLY = "identitystore.openam.attribute.user.name.family";
     private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL = "identitystore.openam.attribute.user.home-info.online.email";
-    private static final String ATTRIBUTE_IDENTITY_NAME_GIVEN = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_NAME_GIVEN );
-    private static final String ATTRIBUTE_IDENTITY_NAME_FAMILLY = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_NAME_FAMILLY );
     private static final String ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
 
     /**
@@ -69,18 +64,16 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
     public IdentityDto getIdentityInfo( String strGuid )
         throws IdentityNotFoundException
     {
-        Identity identityOpenAM;
         Account accountOpenAM;
         IdentityDto identityDto = null;
 
         try
         {
-            identityOpenAM = OpenamIdentityService.getService(  ).getIdentity( strGuid );
             accountOpenAM = OpenamIdentityService.getService(  ).getAccount( strGuid );
 
-            if ( ( identityOpenAM != null ) && ( accountOpenAM != null ) )
+            if ( accountOpenAM != null )
             {
-                identityDto = buildIdentity( identityOpenAM, accountOpenAM );
+                identityDto = buildIdentity( strGuid, accountOpenAM );
             }
         }
         catch ( OpenamIdentityException ex )
@@ -94,20 +87,18 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
 
     /**
      * Builds an identity from the specified OpenAM information
-     * @param identityOpenAM identity of user
+     * @param strGuid the guid
      * @param accountOpenAM Account of user
-     * @return oIUserDTO populate of user
+     * @return IdentityDto populate of user
      */
-    private static IdentityDto buildIdentity( Identity identityOpenAM, Account accountOpenAM )
+    private static IdentityDto buildIdentity( String strGuid, Account accountOpenAM )
     {
         IdentityDto identityDto = new IdentityDto(  );
         Map<String, AttributeDto> mapAttributes = new HashMap<String, AttributeDto>(  );
 
-        identityDto.setConnectionId( identityOpenAM.getUid(  ) );
+        identityDto.setConnectionId( strGuid );
         identityDto.setAttributes( mapAttributes );
 
-        setAttribute( identityDto, ATTRIBUTE_IDENTITY_NAME_GIVEN, identityOpenAM.getFirstname(  ) );
-        setAttribute( identityDto, ATTRIBUTE_IDENTITY_NAME_FAMILLY, identityOpenAM.getLastname(  ) );
         setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL, accountOpenAM.getLogin(  ) );
 
         return identityDto;
