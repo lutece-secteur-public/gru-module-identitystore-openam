@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.identitystore.modules.openam.services;
 import fr.paris.lutece.plugins.identitystore.service.external.IIdentityInfoExternalProvider;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.AttributeDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.AuthorDto;
+import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
 import fr.paris.lutece.plugins.openamidentityclient.business.Account;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityException;
@@ -54,18 +56,20 @@ import java.util.Map;
 public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
 {
     // Properties
+    private static final String PROPERTIES_APPLICATION_CODE = "identitystore.openam.application.code";
     private static final String PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL = "identitystore.openam.attribute.user.home-info.online.email";
+    private static final String APPLICATION_CODE = AppPropertiesService.getProperty( PROPERTIES_APPLICATION_CODE );
     private static final String ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL = AppPropertiesService.getProperty( PROPERTIES_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IdentityDto getIdentityInfo( String strGuid )
+    public IdentityChangeDto getIdentityInfo( String strGuid )
         throws IdentityNotFoundException
     {
         Account accountOpenAM;
-        IdentityDto identityDto = null;
+        IdentityChangeDto identityChangeDto = null;
 
         try
         {
@@ -73,7 +77,7 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
 
             if ( accountOpenAM != null )
             {
-                identityDto = buildIdentity( strGuid, accountOpenAM );
+                identityChangeDto = buildIdentity( strGuid, accountOpenAM );
             }
         }
         catch ( OpenamIdentityException ex )
@@ -82,7 +86,7 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
             throw new IdentityNotFoundException( ex.getMessage(  ), ex );
         }
 
-        return identityDto;
+        return identityChangeDto;
     }
 
     /**
@@ -91,8 +95,14 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
      * @param accountOpenAM Account of user
      * @return IdentityDto populate of user
      */
-    private static IdentityDto buildIdentity( String strGuid, Account accountOpenAM )
+    private static IdentityChangeDto buildIdentity( String strGuid, Account accountOpenAM )
     {
+        IdentityChangeDto identityChangeDto = new IdentityChangeDto(  );
+        
+        AuthorDto authorDto = new AuthorDto(  );
+        authorDto.setApplicationCode( APPLICATION_CODE );
+        identityChangeDto.setAuthor( authorDto );
+        
         IdentityDto identityDto = new IdentityDto(  );
         Map<String, AttributeDto> mapAttributes = new HashMap<String, AttributeDto>(  );
 
@@ -100,8 +110,10 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
         identityDto.setAttributes( mapAttributes );
 
         setAttribute( identityDto, ATTRIBUTE_IDENTITY_HOMEINFO_ONLINE_EMAIL, accountOpenAM.getLogin(  ) );
+        
+        identityChangeDto.setIdentity( identityDto );
 
-        return identityDto;
+        return identityChangeDto;
     }
 
     /**
