@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.identitystore.web.rs.dto.AttributeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.AuthorDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
 import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.web.service.AuthorType;
 import fr.paris.lutece.plugins.openamidentityclient.business.Account;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityException;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityService;
@@ -101,6 +102,8 @@ public class IdentityInfoOpenAmProvider implements IIdentityInfoExternalProvider
         
         AuthorDto authorDto = new AuthorDto(  );
         authorDto.setApplicationCode( APPLICATION_CODE );
+        authorDto.setType( AuthorType.TYPE_APPLICATION.getTypeValue( ) );
+        authorDto.setId( APPLICATION_CODE );
         identityChangeDto.setAuthor( authorDto );
         
         IdentityDto identityDto = new IdentityDto(  );
