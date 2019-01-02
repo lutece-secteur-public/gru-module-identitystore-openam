@@ -34,12 +34,12 @@
 package fr.paris.lutece.plugins.identitystore.modules.openam.services;
 
 import fr.paris.lutece.plugins.identitystore.service.external.IIdentityInfoExternalProvider;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.AttributeDto;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.AuthorDto;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityChangeDto;
+import fr.paris.lutece.plugins.identitystore.v2.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.v2.web.service.AuthorType;
 import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.AttributeDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.AuthorDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityChangeDto;
-import fr.paris.lutece.plugins.identitystore.web.rs.dto.IdentityDto;
-import fr.paris.lutece.plugins.identitystore.web.service.AuthorType;
 import fr.paris.lutece.plugins.openamidentityclient.business.Account;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityException;
 import fr.paris.lutece.plugins.openamidentityclient.service.OpenamIdentityService;
